@@ -38,6 +38,6 @@ nfldata <- read_csv(url(urlfile))
 We will start with the same chart we created in R, a \textbf{scatterplot}. For this example I make use of the \em(pipe} command, $|>$. This tells R puts whatever is one the left of the \em{pipe} into the first place in the command to the right of the \em{pipe}. The command for generating the chart is $ggplot$.
 
 ```{r points scatterplot}
-data |> ggplot(aes(x=PF,y=PA)) + geom_point(color="darkgreen")
+nfldata |> ggplot(aes(x=PF,y=PA)) + geom_point(color="darkgreen")
 ```
 
