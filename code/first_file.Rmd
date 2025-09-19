@@ -57,7 +57,11 @@ nfldata |> ggplot(aes(x=PF,y=PA)) + geom_point(color="darkgreen") + geom_smooth(
 
 ### Bar plots
 
+Now we need to put into place the bar charts as well.
 
+``{r basic bar chart}
+nfldata|> ggplot(aes(x=Team,y="Total CapAllocations")) + geom_bar()
+```
 
 
 
