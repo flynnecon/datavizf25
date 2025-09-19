@@ -30,7 +30,7 @@ Now that the proper packages are loaded and we point to the site with the data w
 To start we are going to read the data in making use of the url.
 
 ```{r  Reading data}
-data <- read_csv(url(urlfile))
+nfldata <- read_csv(url(urlfile))
 ```
 
 ## Data Visualizations
@@ -38,6 +38,6 @@ data <- read_csv(url(urlfile))
 We will start with the same chart we created in R, a \textbf{scatterplot}. For this example I make use of the \em(pipe} command, $|>$. This tells R puts whatever is one the left of the \em{pipe} into the first place in the command to the right of the \em{pipe}. The command for generating the chart is $ggplot$.
 
 ```{r points scatterplot}
-data |> ggplot(aes(x=pf,y=pa)) + geom_point(color="darkgreen")
+data |> ggplot(aes(x=PF,y=PA)) + geom_point(color="darkgreen")
 ```
 
