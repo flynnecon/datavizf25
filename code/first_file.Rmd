@@ -1,0 +1,57 @@
+---
+title: "R First File"
+output: 
+  pdf_document: default
+  html_notebook: default
+---
+
+## Welcome to your first program
+It might be the case you worked in R before, but it is still the first R file for this class. 
+This is going to be our first effort at understanding the R notebook environment and our basic charts. 
+
+## Loading the data
+Our data will either be an Excel file or a comma-separated values (.csv) file. 
+These are very common and readable by many different programs. 
+For most of the R work in this class we will make use of ".csv" files because they make it easier to call the data directly from online. 
+There are packages for loading data into R that provide commands. 
+Much of what we will use this semester is located in the \em{tidyverse}. 
+This is a collection of the most popular collections of code and commands in R. 
+It includes collections for reading data, data analysis, and data visualization.
+
+
+
+```{r}
+library(tidyverse)
+library(tsibble)
+urlfile="https://raw.githubusercontent.com/flynnecon/datavizf24/refs/heads/main/online_monthly_R.csv"
+```
+Now that the proper packages are loaded and we point to the site with the data we can focus on getting the data into R.
+
+# Getting the data to usable
+To start we are going to read the data in making use of the url.
+
+```{r  data reading}
+data <- read_csv(url(urlfile))
+```
+
+Now there is some data management needed. The program is not going to know how to read the date when it is imported as a text field.\footnote{Recall I showed this in class and it just did not look right.} The steps here are to first, drop the first column, then replace the column with a user generated sequence of dates matching what was already in the data, the create a readable data table using the date information. That is the last line wit the \em{mutate} and \em{as\_tsibble} commands.
+
+```{r data management}
+data <- data[-c(1)]
+data$month <- seq(as.Date("2018-06-01"), as.Date("2024-07-01"), by="1 month")
+data_tsbl <- data |> mutate(date=yearmonth(month)) |> as_tsibble(index=date)
+```
+## Data Visualizations
+
+We will start with the same chart we created in R, a \textbf{scatterplot}. For this example I make use of the \em(pipe} command, $|>$. This tells R puts whatever is one the left of the \em{pipe} into the first place in the command to the right of the \em{pipe}. The command for generating the chart is $ggplot$.
+```{r scatter}
+data_tsbl |> ggplot(aes(x=date,y=Handle)) + geom_point(color="darkgreen")
+```
+
+```{r another scatter}
+ggplot(data=data_tsbl,aes(x=date,y=Handle/1000000000)) + geom_line(color="blue")
+```
+
+```{r combination}
+ggplot(data=data_tsbl, aes(x=date,y=Handle)) + geom_point(color="darkgreen") + geom_line(color="blue") + theme_bw()
+```
