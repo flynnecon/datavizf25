@@ -1,4 +1,4 @@
-﻿Rank,Team,Wins,Losses,Ties,Total capamount,PF,PA
+﻿Rank,Team,Wins,Losses,Ties,capamount,PF,PA
 1, CAR,5,12,0 ,261525112,341,534
 2, BUF,13,4,0 ,256067245,525,368
 3, NYG,3,14,0 ,258827092,273,415
@@ -31,4 +31,5 @@
 30, NE,4,13,0 ,229603859,289,417
 31, CLE,3,14,0 ,248708856,258,435
 32, SF,6,11,0 ,246996749,389,436
+
 
