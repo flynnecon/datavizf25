@@ -18,12 +18,11 @@ Much of what we will use this semester is located in the \em{tidyverse}.
 This is a collection of the most popular collections of code and commands in R. 
 It includes collections for reading data, data analysis, and data visualization.
 
-
+We block of code with the 3 single quotes and then use braces around **r** so it knows what we are using that program at the start and after the commands close it with 3 single quotes.
 
 ```{r}
 library(tidyverse)
-library(tsibble)
-urlfile="https://raw.githubusercontent.com/flynnecon/datavizf24/refs/heads/main/online_monthly_R.csv"
+urlfile="https://raw.githubusercontent.com/flynnecon/datavizf25/refs/heads/main/online_monthly_R.csv"
 ```
 Now that the proper packages are loaded and we point to the site with the data we can focus on getting the data into R.
 
