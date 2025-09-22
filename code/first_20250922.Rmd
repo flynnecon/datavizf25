@@ -68,8 +68,14 @@ nfldata |> ggplot(aes(x=PF,y=PA)) + geom_point(color="darkgreen") + geom_smooth(
 
 Now we need to put into place the bar charts as well.
 
-``{r basic bar chart}
-nfldata|> ggplot(aes(x=Team,y=capamount)) + geom_bar()
+```{r basic bar chart}
+nfldata|> ggplot(aes(x=Team,y=capamount)) + geom_bar(stat="identity")
+```
+I am not a fan of the scientific notation on the y-axis. So let's change that. 
+
+```{r bar chart with new axis}
+options(scipen=999)
+nfldata |> ggplot(aes(Team,y=capamount)) + geom_bar(stat="identity")
 ```
 
 
