@@ -1,8 +1,10 @@
 ---
-title: "R First File"
-output: 
-  pdf_document: default
+title: "R First File-updated"
+output:
+  html_document:
+    df_print: paged
   html_notebook: default
+  pdf_document: default
 ---
 
 ## Welcome to your first program
@@ -41,19 +43,23 @@ Now we look at replicating various different aspects that we pulled off in Excel
 
 ### Scatterplots
 
-We will start with the same chart we created in R, a **scatterplot**. For this example I make use of the *pipe* command, |>. This tells R puts whatever is one the left of the *pipe* into the first place in the command to the right of the \em{pipe}. The command for generating the chart is **ggplot**.
+We will start with the same chart we created in R, a **scatterplot**. 
+For this example I make use of the *pipe* command, |>. 
+This tells R puts whatever is one the left of the *pipe* into the first place in the command to the right of the \em{pipe}. The c
+ommand for generating the chart is **ggplot**.
 
 ```{r basic scatterplot}
 nfldata |> ggplot(aes(x=PF,y=PA)) + geom_point()
 ```
 As we saw in class, this is equivalent to the basic form of the call of the **ggplot** command, which is
-$$ggplot(data=nfldata,aes(x=PF,y=PA)) + geom_point()$$
+$$ggplot(data=nfldata,aes(x=PF,y=PA)) + geom\text{_}point()$$
 
 What about if we want to change the color of the dots? Inside the *point* command we can add the color we wish.
 
 ```{r scatterplot with new color}
 nfldata |> ggplot(aes(x=PF,y=PA)) + geom_point(color="darkgreen")
 ```
+
 If you select a color recognized by RStudio the name of the color selected will have a box around it in the color selected.
 We will engage in more detailed discussions of color choice later in the semester but it is something you should always have as a consideration in your work. 
 
@@ -63,6 +69,21 @@ And then we had the smoothed or trend line. This requires the use of the *geom_s
 nfldata |> ggplot(aes(x=PF,y=PA)) + geom_point(color="darkgreen") + geom_smooth(method=lm, color="blue",se=FALSE)
 ```
 
+What about using the comparison to the average again in this case? 
+We make use of the **mean** command from R and can plug this right into the formula. 
+
+```{r scatter plus trend less mean}
+nfldata |> ggplot(aes(x=PF-mean(PF),y=PA-mean(PA))) + geom_point(color="darkgreen") + geom_smooth(method=lm, color="blue",se=FALSE)
+```
+
+Only one issue here. 
+I want to highlight the axes clearer. 
+
+```{r scatter plus trend and mean deduction}
+nfldata |> ggplot(aes(x=PF-mean(PF),y=PA-mean(PA))) + geom_point(color="darkgreen") + geom_smooth(method=lm, color="blue",se=FALSE) + geom_hline(yintercept=0) + geom_vline(xintercept=0)
+```
+
+
 
 ### Bar plots
 
@@ -71,11 +92,154 @@ Now we need to put into place the bar charts as well.
 ```{r basic bar chart}
 nfldata|> ggplot(aes(x=Team,y=capamount)) + geom_bar(stat="identity")
 ```
-I am not a fan of the scientific notation on the y-axis. So let's change that. 
+
+I am not a fan of the scientific notation on the y-axis. 
+So let's change that. 
 
 ```{r bar chart with new axis}
 options(scipen=999)
 nfldata |> ggplot(aes(Team,y=capamount)) + geom_bar(stat="identity")
 ```
 
+Recall I talked about many different types of code leading to the same outcome. 
+What happens when we write this other code: 
 
+```{r column command}
+nfldata |> ggplot(aes(Team,y=capamount)) + geom_col()
+```
+
+The image itself is pretty boring, though I am telling you this is actually important. 
+Does the data itself, as visualized, tell me anything compelling or interesting?
+This is a key question and usually needs to be addressed before we add color and other changes. 
+Let's make a few changes here:
+* Change the bar color, 
+* Change the axis titles to something more appropriate, and
+* Change the orientation of the test
+
+```{r more exciting bar chart}
+nfldata |> ggplot(aes(Team,y=capamount)) + geom_col(color="darkblue",fill="darkblue") + labs(x="Team",y="$") + theme(axis.text.x = element_text(angle=90))
+```
+
+This is a bit of a nicer chart and something we might be able to work with. ---
+title: "R First File"
+output:
+  html_document:
+    df_print: paged
+  html_notebook: default
+  pdf_document: default
+---
+
+## Welcome to your first program
+It might be the case you worked in R before, but it is still the first R file for this class. 
+This is going to be our first effort at understanding the R notebook environment and our basic charts. 
+
+## Loading the data
+Our data will either be an Excel file or a comma-separated values (.csv) file. 
+These are very common and readable by many different programs. 
+For most of the R work in this class we will make use of ".csv" files because they make it easier to call the data directly from online. 
+There are packages for loading data into R that provide commands. 
+Much of what we will use this semester is located in the *tidyverse*. 
+This is a collection of the most popular collections of code and commands in R. 
+It includes collections for reading data, data analysis, and data visualization.
+
+We block off code with the 3 single quotes and then use braces around **r** so it knows what we are using that program at the start and after the commands close it with 3 single quotes.
+
+```{r Package set up and data location}
+library(tidyverse)
+urlfile="https://raw.githubusercontent.com/flynnecon/datavizf25/refs/heads/main/data/nfldata1.csv"
+```
+<!-- If I want to make a comment in the body of the text that will not appear anywhere in the printed outpout I can set that text off as you see at the start and end of this statement.-->
+
+
+Now that the proper packages are loaded and we point to the site with the data we can focus on getting the data into R.
+
+# Getting the data to usable
+To start we are going to read the data in making use of the url.
+
+```{r  Reading data}
+nfldata <- read_csv(url(urlfile))
+```
+
+## Data Visualizations
+Now we look at replicating various different aspects that we pulled off in Excel. 
+
+### Scatterplots
+
+We will start with the same chart we created in R, a **scatterplot**. 
+For this example I make use of the *pipe* command, |>. 
+This tells R puts whatever is one the left of the *pipe* into the first place in the command to the right of the \em{pipe}. The c
+ommand for generating the chart is **ggplot**.
+
+```{r basic scatterplot}
+nfldata |> ggplot(aes(x=PF,y=PA)) + geom_point()
+```
+As we saw in class, this is equivalent to the basic form of the call of the **ggplot** command, which is
+$$ggplot(data=nfldata,aes(x=PF,y=PA)) + geom\text{_}point()$$
+
+What about if we want to change the color of the dots? Inside the *point* command we can add the color we wish.
+
+```{r scatterplot with new color}
+nfldata |> ggplot(aes(x=PF,y=PA)) + geom_point(color="darkgreen")
+```
+
+If you select a color recognized by RStudio the name of the color selected will have a box around it in the color selected.
+We will engage in more detailed discussions of color choice later in the semester but it is something you should always have as a consideration in your work. 
+
+And then we had the smoothed or trend line. This requires the use of the *geom_smooth* command, setting it for the linear model, deciding on color and whether we need confidence intervals. 
+
+```{r scatter plus trend}
+nfldata |> ggplot(aes(x=PF,y=PA)) + geom_point(color="darkgreen") + geom_smooth(method=lm, color="blue",se=FALSE)
+```
+
+What about using the comparison to the average again in this case? 
+We make use of the **mean** command from R and can plug this right into the formula. 
+
+```{r scatter plus trend less mean}
+nfldata |> ggplot(aes(x=PF-mean(PF),y=PA-mean(PA))) + geom_point(color="darkgreen") + geom_smooth(method=lm, color="blue",se=FALSE)
+```
+
+Only one issue here. 
+I want to highlight the axes clearer. 
+
+```{r scatter plus trend and mean deduction}
+nfldata |> ggplot(aes(x=PF-mean(PF),y=PA-mean(PA))) + geom_point(color="darkgreen") + geom_smooth(method=lm, color="blue",se=FALSE) + geom_hline(yintercept=0) + geom_vline(xintercept=0)
+```
+
+
+
+### Bar plots
+
+Now we need to put into place the bar charts as well.
+
+```{r basic bar chart}
+nfldata|> ggplot(aes(x=Team,y=capamount)) + geom_bar(stat="identity")
+```
+
+I am not a fan of the scientific notation on the y-axis. 
+So let's change that. 
+
+```{r bar chart with new axis}
+options(scipen=999)
+nfldata |> ggplot(aes(Team,y=capamount)) + geom_bar(stat="identity")
+```
+
+Recall I talked about many different types of code leading to the same outcome. 
+What happens when we write this other code: 
+
+```{r column command}
+nfldata |> ggplot(aes(Team,y=capamount)) + geom_col()
+```
+
+The image itself is pretty boring, though I am telling you this is actually important. 
+Does the data itself, as visualized, tell me anything compelling or interesting?
+This is a key question and usually needs to be addressed before we add color and other changes. 
+Let's make a few changes here:
+* Change the bar color, 
+* Change the axis titles to something more appropriate, and
+* Change the orientation of the test
+
+```{r more exciting bar chart}
+nfldata |> ggplot(aes(Team,y=capamount)) + geom_col(color="darkblue",fill="darkblue") + labs(x="Team",y="$") + theme(axis.text.x = element_text(angle=90))
+```
+
+This is a bit of a nicer chart and something we might be able to work with. 
