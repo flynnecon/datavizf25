@@ -37,6 +37,7 @@ nfldata <- read_csv(url(urlfile))
 ```
 
 ## Data Visualizations
+Now we look at replicating various different aspects that we pulled off in Excel. 
 
 ### Scatterplots
 
