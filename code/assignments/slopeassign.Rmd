@@ -10,10 +10,11 @@ output:
 ## Assignment Information
 
 Welcome to the first R assignment. This file is a starter for you to create your slope charts in R.
-I include starter code for you to use to download the data. 
+I include starter code for you to use to download the data.
+Use this data and the code files from class to create a slope chart for the percentages in support of marijuana use legalization. 
 
 ```{r Package set up and data location}
 library(tidyverse)
-urlfile="https://raw.githubusercontent.com/flynnecon/datavizf25/refs/heads/main/data/birth_rates_370f25.csv"
+urlfile="https://raw.githubusercontent.com/flynnecon/datavizf25/refs/heads/main/data/assignments/slopeassign.csv"
 slopedata <- read_csv(url(urlfile))
 ```
