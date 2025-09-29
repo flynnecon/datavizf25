@@ -1,5 +1,5 @@
 ---
-title: "Slope Chart i R"
+title: "Slope Chart in R"
 output:
   html_document:
     df_print: paged
@@ -27,4 +27,16 @@ We use the same types of commands as we did last time to load the libraries and 
 library(tidyverse)
 urlfile="https://raw.githubusercontent.com/flynnecon/datavizf25/refs/heads/main/data/birth_rates_370f25.csv"
 ```
-So the 
+
+
+
+
+This data is in a format called *wide*.
+Think of it like this, every variable is in a column of its own.
+This is one way to store data and it is perfectly fine and works for the mindset of most people.
+However, there are alternative ways to organize data and we are going to explore one of them here, called *longer* data. 
+This works when variables themselves might simply be a value we can use in identification. 
+Think, for example, of **male** versus **female** test scores. 
+We could have a variable for each, and there are situations where that makes sense, or we could use the sex identifier as a value in another variable, in this case *sex*. 
+
+
