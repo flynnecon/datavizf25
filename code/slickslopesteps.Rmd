@@ -1,0 +1,99 @@
+---
+title: "Slope Chart in Steps"
+output:
+  html_document:
+    df_print: paged
+  html_notebook: default
+  pdf_document: default
+---
+
+## The Slope Chart Streamlined
+
+I think there are some concerns about coding and so I am providing a stripped down file with less descriptive text to help sudents along with the code. 
+The thought is that less text will allow you to focus.
+Keep these steps in mind for your work in general. 
+
+1. Get the data into the program.
+2. Manipulate and adjust the data in preparation for work. 
+3. Generate your basic chart or graph.
+4. Engage in fine-tuning and polishing up your image. 
+
+## Data Loading
+
+```{r Package set up and data location}
+library(tidyverse)
+urlfile="https://raw.githubusercontent.com/flynnecon/datavizf25/refs/heads/main/data/birth_rates_370f25.csv"
+brdata_wide <- read_csv(url(urlfile))
+View(brdata_wide)
+```
+
+## Data manipulation
+
+```{r changing data wide to long}
+brdata_long <- brdata_wide |> pivot_longer(cols=c("y2000","y2024"),names_to="year")
+View(brdata_long)
+```
+
+## Basic Charts
+
+
+```{r bar chart}
+brdata_long |> # pipe the data into the ggplot command
+ggplot(aes(x=country,y=value,fill=year)) # the basic command for the bar chart
++ geom_bar(position="dodge",stat="identity") # the specifics of the bar including dodge.
+```
+
+```{r Basic slope chart}
+brdata_long |> # piping the data into the command
+ggplot(aes(x=year,y=value,group=country,color=factor(country))) # the set up including the axes, grouping the data and then coloring it
++ geom_line()
+```
+
+## Fine-tuning and polish
+
+```{r Snazziest slope chart}
+brdata_long |> #piping in the data
+ggplot(aes(x=year,y=value,group=country,color=factor(country))) + #the basic ggplot command 
+geom_line(linewidth=2, alpha=0.5) + # the lines in the slope chart 
+geom_point(size=3) + # the point at the end of the line segments
+# making the left labels, notice the use of variables and calling different values
+geom_text(data = brdata_long %>% filter(year == "y2000"), 
+            aes(label = paste0(country, " - ", value, "%")) , 
+            hjust = 1.35, 
+            fontface = "bold", 
+            size = 4) +
+# making the right labels, again using the variables and calling the different values
+  geom_text(data = brdata_long %>% filter(year == "y2024"), 
+            aes(label = paste0(country, " - ", value, "%")) , 
+            hjust = -.35, 
+            fontface = "bold", 
+            size = 4) +
+# move the x axis labels up top
+scale_x_discrete(position = "top") +
+# now we make everything black and white to get rid of the background
+theme_bw() +
+# removing the box around the chart
+theme(panel.border=element_blank()) + # the element_blank() is a key part of saying we are not including that piece or element
+# moving the legend to the bottom and getting rid of the legend title since factor looks bad
+theme(legend.position="none") +
+# strip down the y-axia
+theme(axis.title.y     = element_blank()) +
+theme(axis.text.y      = element_blank()) +
+theme(panel.grid.major.y = element_blank()) +
+theme(panel.grid.minor.y = element_blank()) +
+# do the same with the x-axis 
+theme(axis.title.x     = element_blank()) +
+theme(panel.grid.major.x = element_blank()) +
+theme(axis.text.x.top      = element_text(size=12)) +
+# Remove x & y tick marks
+theme(axis.ticks       = element_blank()) +
+# adding better axis labels and a title and subtitle
+  labs(
+  title="Birth rates in 2000 and 2024",
+  subtitle="SPRT 370",
+  x="Year",
+  y="%")
+```
+
+
+
