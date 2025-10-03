@@ -39,14 +39,14 @@ View(brdata_long)
 
 ```{r bar chart}
 brdata_long |> # pipe the data into the ggplot command
-ggplot(aes(x=country,y=value,fill=year)) # the basic command for the bar chart
-+ geom_bar(position="dodge",stat="identity") # the specifics of the bar including dodge.
+ggplot(aes(x=country,y=value,fill=year)) + # the basic command for the bar chart
+geom_bar(position="dodge",stat="identity") # the specifics of the bar including dodge.
 ```
 
 ```{r Basic slope chart}
 brdata_long |> # piping the data into the command
-ggplot(aes(x=year,y=value,group=country,color=factor(country))) # the set up including the axes, grouping the data and then coloring it
-+ geom_line()
+ggplot(aes(x=year,y=value,group=country,color=factor(country))) + # the set up including the axes, grouping the data and then coloring it
+geom_line()
 ```
 
 ## Fine-tuning and polish
