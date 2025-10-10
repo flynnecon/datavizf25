@@ -1,0 +1,83 @@
+---
+title: "Various Bar Charts in R"
+output: html_notebook
+---
+
+There are various ways to make bar charts in R. 
+Having now seen R code and worked in it for a time I will be pushing the code at you a bit more.
+This will mean options for you to select to arrive at the right answer. 
+There will still be justifications provided but I want to push you.
+
+```{r library entry}
+library(tidyverse)
+```
+
+
+
+```{r actually entering data}
+data_bar <- data.frame(
+Response = c("Strongly Disagree","Somewhat Disagree","Somewhat Agree","Strongly Agree"),
+Obama = c(31,11,21,28),
+Trump1 = c(39,13,20,21),
+Biden = c(39,11,20,19),
+Trump2a = c(36,7,15,34),
+Trump2b = c(46,9,17,24)
+)
+```
+
+```{r pivot the data to longer}
+bar_long <- data_bar |> pivot_longer(cols=c("Obama","Trump1","Biden","Trump2a","Trump2b"),names_to="admin")
+```
+
+
+```{r clustered column}
+bar_long |> ggplot(aes(x=admin,y=value,fill=Response)) + geom_bar(position="dodge",stat="identity")
+```
+
+One issue here is the order of the columns.
+The default order here is *alphabetical*. 
+We need to address this because this does not make intutitive sense with the ordering of the categories.
+As a result we need a code fix to change this around. 
+
+
+
+
+
+```{r stacked column}
+bar_long |> ggplot(aes(x=admin,y=value,fill=Response)) + geom_bar(stat="identity")
+```
+
+```{r clustered bar chart}
+bar_long |> ggplot(aes(x=admin,y=value,fill=Response)) + geom_bar(position="dodge",stat="identity") + coord_flip()
+
+```
+
+
+```{r stacked bar chart}
+bar_long |> ggplot(aes(x=admin,y=value,fill=Response)) + geom_bar(stat="identity") + coord_flip()
+
+```
+
+
+```{r clustered column properly sorted}
+bar_long |>  ggplot(aes(x=admin,y=value,fill=Response)) + geom_bar(position="dodge",stat="identity")
+
+bar_long$admin <- factor(bar_long$admin, levels=c("Obama","Trump1","Biden","Trump2a","Trump2b")) #Giving the explict order to R
+bar_long$Response <- factor(bar_long$Response, levels=c("Strongly Disagree","Somewhat Disagree","Somewhat Agree","Strongly Agree"))
+
+bar_long |>  ggplot(aes(x=admin,y=value,fill=Response)) + geom_bar(position="dodge",stat="identity")
+```
+
+
+```{r clustered bar chart proper order}
+bar_long |> ggplot(aes(x=admin,y=value,fill=Response)) + geom_bar(position="dodge",stat="identity") + coord_flip()
+
+```
+
+
+```{r stacked bar chart properly ordered}
+bar_long |> ggplot(aes(x=admin,y=value,fill=Response)) + geom_bar(stat="identity") + coord_flip()
+```
+
+
+
