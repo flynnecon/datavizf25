@@ -1,0 +1,231 @@
+---
+title: "Bar Charts in RStudio - The Presentation"
+author: "David T. Flynn, PhD"
+date: "2025-10-13"
+output: powerpoint_presentation
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE)
+library(tidyverse)
+library(kableExtra)
+
+data_bar <- data.frame(
+Response = c("Strongly Disagree","Somewhat Disagree","Somewhat Agree","Strongly Agree"),
+Obama = c(31,11,21,28),
+Trump1 = c(39,13,20,21),
+Biden = c(39,11,20,19),
+Trump2a = c(36,7,15,34),
+Trump2b = c(46,9,17,24)
+)
+
+bar_long <- data_bar |> pivot_longer(cols=c("Obama","Trump1","Biden","Trump2a","Trump2b"),names_to="admin")
+```
+
+## R Markdown
+
+This is an R Markdown presentation. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. For more details on using R Markdown see <http://rmarkdown.rstudio.com>.
+
+When you click the **Knit** button a document will be generated that includes both content as well as the output of any embedded R code chunks within the document.
+
+## Slide with Bullets
+
+- Bullet 1
+- Bullet 2
+- Bullet 3
+
+## Clustered Columns
+
+```{r clustered columns wrong}
+bar_long |> ggplot(aes(x=admin,y=value,fill=Response)) + geom_bar(position="dodge",stat="identity")
+```
+
+## Clustered Bars
+
+```{r clustered bars wrong}
+bar_long |> ggplot(aes(x=admin,y=value,fill=Response)) + geom_bar(position="dodge",stat="identity") + coord_flip()
+```
+
+
+## Remember what is wrong
+
+- The ordering of the presidents is alphabetical, not chronological.
+- The ordering of the response categories is non-consecutive too.
+- You need to know if these are consequential issues to your point.
+- This problem persists even when there are not clustered but stacked columns/bars.
+
+## Stacked columns
+```{r stacked column}
+bar_long |> ggplot(aes(x=admin,y=value,fill=Response)) + geom_bar(stat="identity")
+```
+
+## Stacked bars
+
+```{r stacked bar chart}
+bar_long |> ggplot(aes(x=admin,y=value,fill=Response)) + geom_bar(stat="identity") + coord_flip()
+```
+
+## Our fix
+
+- We need to tell R the specific order we want. 
+- I create a new data frame equal to the one we had but with a new title.
+
+```{r data fix, echo=TRUE}
+bar_long_fix <- bar_long
+```
+
+## We feed the order
+
+```{r my ordering, echo=TRUE}
+bar_long_fix$admin <- factor(bar_long_fix$admin, levels=c("Obama","Trump1","Biden","Trump2a","Trump2b")) #Giving the explict order to R
+bar_long_fix$Response <- factor(bar_long_fix$Response, levels=c("Strongly Disagree","Somewhat Disagree","Somewhat Agree","Strongly Agree"))
+```
+
+
+## After the data fix - Clustered Columns
+
+```{r clustered column repaired}
+bar_long_fix |>  ggplot(aes(x=admin,y=value,fill=Response)) + geom_bar(position="dodge",stat="identity")
+```
+
+
+
+
+## After the data fix - Stacked Columns
+
+```{r stacked column repaired}
+bar_long_fix |>  ggplot(aes(x=admin,y=value,fill=Response)) + geom_bar(stat="identity")
+```
+
+
+## After the data fix - Clustered Bars
+
+```{r clustered bars repaired}
+bar_long_fix |>  ggplot(aes(x=admin,y=value,fill=Response)) + geom_bar(position="dodge",stat="identity") + coord_flip()
+```
+
+
+## After the data fix - Stacked Bars
+
+```{r stacked bars repaired}
+bar_long_fix |>  ggplot(aes(x=admin,y=value,fill=Response)) + geom_bar(stat="identity") + coord_flip()
+```
+
+## Now we advance
+
+- I hate the color scheme but let's wait on that for later.
+- Now let's try the broken stacked chart.
+- It is not the same as Excel but it looks pretty good. 
+
+## Broken and Stacked
+
+```{r broken stacked bar,fig.width=11,fig.height=6}
+bar_long_fix |>  ggplot(aes(x=admin,y=value,fill=Response)) + geom_bar(stat="identity") + coord_flip() + theme_minimal(base_size=20) + geom_hline(yintercept=0) + facet_wrap(vars(Response),nrow=1) + theme(legend.position="none")
+```
+
+
+## The key command
+
+- The key to getting this is the **facet_wrap()** command.
+- It tells R I want you to repeat the chart across the specified variables.
+- As a result I get four bar charts and I organized then in 1 row.
+- The only wrinkle was to specify the width to make it look alright.
+
+## Finishing it off with flair
+
+```{r broken stacked bar with flair,fig.width=11,fig.height=6}
+bar_long_fix |>  ggplot(aes(x=admin,y=value,fill=Response)) + geom_bar(stat="identity") + coord_flip() + theme_minimal(base_size=20) + geom_hline(yintercept=0) + facet_wrap(vars(Response),nrow=1) + theme(legend.position="none") + labs(x=element_blank(), y=element_blank())
+```
+
+## Diverging bar chart
+
+- Now we move on to the diverging bar chart
+- This bar chart requires data manipulation once again. 
+- Just as in Excel we need to make one set of data negative.
+- The obvious candidates are the negative perceptions.
+
+## Manipulate the data
+
+- We Create negative values for the negative categories
+- This is a key part of the diverging aspect to the chart
+
+```{r making data negative}
+bar_diverge <- bar_long_fix |> mutate(new_value = ifelse(Response=="Strongly Disagree",-value,value))
+
+bar_diverge <- bar_diverge |> mutate(new_value = ifelse(Response=="Somewhat Disagree",-new_value,new_value))
+
+bar_diverge$Response <- factor(bar_diverge$Response, levels=c("Strongly Disagree","Somewhat Disagree","Somewhat Agree","Strongly Agree"))
+```
+
+## Make the diverging chart
+
+```{r diverging chart}
+bar_diverge |>  ggplot(aes(x=admin,y=new_value,fill=Response)) + geom_bar(stat="identity") + coord_flip() 
+```
+
+## Note the order
+
+- There is an issue with the ordring of responses
+- This actually defies an easy fix
+- We meed to make two charts and reverse the category order to fix this
+
+
+## Make Two Charts
+
+```{r 2 charts data fix}
+
+disags <- filter(bar_diverge,new_value < 0) |> mutate(Response = factor(Response, levels=c("Strongly Disagree","Somewhat Disagree","Somewhat Agree","Strongly Agree"),ordered=TRUE))
+
+ags <- filter(bar_diverge,new_value > 0) |> mutate(Response = factor(Response, levels=c("Strongly Agree","Somewhat Agree","Somewhat Disagree","Strongly Disagree"),ordered=TRUE))
+
+coloring <- c("orange","yellow","lightblue","darkgreen")
+names(coloring) <- c("Strongly Disagree","Somewhat Disagree","Somewhat Agree","Strongly Agree")
+
+ggplot() + geom_col(data=disags,aes(y=new_value,x=admin,fill=Response)) + geom_col(data=ags,aes(y=new_value,x=admin,fill=Response)) + coord_flip() + scale_fill_manual(values=coloring)
+
+
+```
+
+
+## Making it flashier
+
+```{r flashier diverging chart}
+ggplot() + geom_col(data=disags,aes(y=new_value,x=admin,fill=Response),alpha=0.8) + geom_col(data=ags,aes(y=new_value,x=admin,fill=Response),alpha=0.8) + coord_flip() + scale_fill_manual(values=coloring) + coord_flip() + theme_minimal() + geom_hline(yintercept=0) + theme(legend.position="top") + labs(x=element_blank(), y=element_blank())
+```
+
+
+## Supressing error
+
+```{r flashier diverging chart with no error, error=FALSE, warning=FALSE, message=FALSE,fig.height=6,fig.width=11}
+ggplot() + geom_col(data=disags,aes(y=new_value,x=admin,fill=Response),alpha=0.8) + geom_col(data=ags,aes(y=new_value,x=admin,fill=Response),alpha=0.8) + coord_flip() + scale_fill_manual(values=coloring) + coord_flip() + theme_minimal() + geom_hline(yintercept=0) + theme(legend.position="top") + labs(x=element_blank(), y=element_blank())
+```
+
+## Legend Fix
+
+
+```{r flashier diverging chart and correct, message=FALSE, error=FALSE, warning=FALSE,fig.height=6,fig.width=11}
+
+
+ggplot() + geom_col(data=disags,aes(y=new_value,x=admin,fill=Response),alpha=0.8) + geom_col(data=ags,aes(y=new_value,x=admin,fill=Response),alpha=0.8) + coord_flip() + scale_fill_manual(breaks=c("Strongly Disagree","Somewhat Disagree","Somewhat Agree","Strongly Agree"),values=c("darkorange3","orange","deepskyblue","deepskyblue4")) + coord_flip() + theme_minimal() + geom_hline(yintercept=0) + theme(legend.position="top") + labs(x=element_blank(), y=element_blank())
+```
+
+
+## Another code approach-data fix
+
+```{r more straightforward code, echo=TRUE}
+bar_diverge_alt <- bar_diverge |> mutate(Response=fct_relevel(Response, "Strongly Disagree", "Somewhat Disagree", "Somewhat Agree","Strongly Agree"), Response=fct_rev(Response))
+```
+
+
+## Finalized chart - nice labels
+
+```{r all correct now, fig.height=6, fig.width=11, message=FALSE, error=FALSE, warning=FALSE, }
+bar_diverge_alt |>  ggplot(aes(x=admin,y=new_value,fill=Response)) + geom_bar(stat="identity") + coord_flip() + scale_fill_manual(breaks=c("Strongly Disagree","Somewhat Disagree","Somewhat Agree","Strongly Agree"),values=c("darkorange3","orange","deepskyblue","deepskyblue4")) + theme_minimal() +  theme(legend.position="top") + labs(x=element_blank(),y=element_blank()) + scale_y_continuous(labels = ~scales::percent(abs(.)/100))
+
+```
+
+
+
+
+
+
