@@ -1,0 +1,74 @@
+---
+title: "Lollipop charts"
+output:
+  html_document:
+    df_print: paged
+    number_sections: true
+---
+
+The steps to create a **lollipop** chart in R are fairly straightforward.
+We do our usual ordering:
+1. Get our data together.
+2. Create the basic chart.
+3. Modify and fine tune our creation.
+
+# Start with the data
+
+As before we are creating the data we need in the code. 
+We are also loading the *tidyverse* here too. 
+
+```{r Creating the data,include=FALSE}
+library(tidyverse)
+
+data_champs <- data.frame(
+team = c("Tom\nBrady","Boston\nCeltics","Montreal\nHabs","New York\nYankees"),
+titles = c(7,18,23,27))
+```
+
+# Getting the Basic GGPLOT
+
+Now we start with the basic creation. We use the *geom_segment* command here.
+This command creates a line segment between the start and end points you give it. 
+It can be very useful for creating arrows in charts. 
+
+```{r Lollipop chart}
+ggplot(data_champs,aes(x=team,y=titles)) + geom_point(size=5,color="red") + 
+geom_segment(aes(xend=team,yend=0),lwd=3) + coord_flip()
+```
+
+
+I do not like the bar in front of the dot and so that needs to change. 
+We can also take care of the background if we want and make it cleaner.
+
+
+# Cleaning up the chart
+
+Now we clean up the chart and put the dots behind the segments. 
+We also change the background a bit. 
+
+```{r Lollipop chart better}
+library(viridis)
+ggplot(data_champs,aes(x=team,y=titles)) +  
+geom_segment(aes(xend=team,yend=0),lwd=2) + geom_point(size=5,color="red") + coord_flip() + theme_bw() + labs(x="Team",y="Titles") + scale_y_continuous(expand=c(0,0))
+```
+
+This is good but there is more we can do. 
+In particular I do not like the visual feel from this ordering of teams.
+We can also look at color too. 
+
+# More cleanup and fine tuning
+
+Wed can reorder the teams by using, well, *reorder* right in the **ggplot** command. 
+I then tried to match colors a bit better and changed the dot color.
+Let's also get rid of the axis titles. 
+
+```{r reordered plot}
+ggplot(data_champs,aes(x=reorder(team,-titles),y=titles)) +  
+geom_segment(aes(xend=team,yend=0,color=team),lwd=2) + geom_point(size=5,color="gold2") + coord_flip() + theme_minimal() + scale_y_continuous(expand=c(0,0)) + scale_color_manual(values=c("Tom\nBrady"="darkblue", "Boston\nCeltics"="green4","Montreal\nHabs"="royalblue2","New York\nYankees"="black")) + theme(legend.position="none",axis.title=element_blank())
+
+
+```
+
+
+I like the end result here.
+A nicer overall feel.
