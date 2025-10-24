@@ -1,0 +1,15 @@
+---
+title: "Class Dot Plot"
+output: html_notebook
+---
+
+
+```{r libraries and data}
+library(tidyverse)
+marvel <- data.frame(
+character = c("Iron Man","Thor","Cpt America","Dr. Strange","Guardians of\n the Galaxy","Ant-Man"),
+first = c(318604126,181030624,176654505,232641920,333714112,180202163),
+second= c(312433331,206362140,259746958,411331607,389813101,216648740)
+)
+```
+
