@@ -1,0 +1,83 @@
+---
+title: "Making Maps in R"
+author: "David T. Flynn, PhD"
+date: "2025-11-10"
+output: powerpoint_presentation
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE)
+```
+
+## Mapping in R
+
+ - Map coding in R is intense as I told you. 
+ - There is a great deal of data work done before you map.
+ - Let's consider the necessities. 
+
+
+## Data Needs
+
+- Geographic data to draw the map.
+- Names to go along with the location.
+- The data of interest matched in some way with the location data. 
+
+## Libraries
+
+```{r necessary libraries, echo = TRUE,results='hide', message=FALSE,warning=FALSE}
+library(tidyverse)
+library(tigris)
+library(sf)
+library(readxl)
+library(viridis)
+```
+
+## Two new libraries
+
+- **tigris** and **sf**
+- **tigris** is how we get the shape files for the regions
+- **sf** is the library helping us make use of the data
+- *counties* is a key command loading the geography data
+
+
+## Loading the data
+
+```{r load the data, echo=TRUE,results='hide',message=FALSE}
+region_counties <- counties(c("ID","MT","ND","SD","WY"))
+ruraldata <- read.csv("https://raw.githubusercontent.com/flynnecon/datavizf25/refs/heads/main/data/Ruralurbancontinuumcodes2023.csv")
+ruralmapdata <- merge(region_counties,ruraldata,by.x="NAMELSAD",by.y="County_Name")
+```
+
+## *Merge* command
+
+- *merge* is a new command (I think)
+- It is doing exactly what you would expect it to do.
+- The command brings together two distinct data sets.
+- The only need is to specifcy the merging fields. 
+
+
+## Map Code
+
+```{r making the map code only, echo=TRUE,eval=FALSE}
+ggplot(data=ruralmapdata) + geom_sf(aes(fill=Description)) + theme_minimal()+ coord_sf(datum=NA) + scale_fill_viridis_d(name="Rurality") + labs(caption=paste("Source:USDA")) + theme(legend.text = element_text(size=6),legend.key.width=unit(.25,"in"), legend.title=element_blank(),legend.position="bottom")+guides(fill=guide_legend(nrow=5,byrow=TRUE))
+```
+
+## Code Commands
+
+- *ggplot* is a known element.
+- *geom_sf()* is how we call the geometry interacting with the spatial data. 
+- There is an option to specify the *fill* that I use the description data.
+- *coord_sf()* makes certain layers are using a common coordinate reference system.
+
+## Other pieces of code
+
+- The color scheme is *viridis* which we saw before. 
+- We play with the *legend* and use *paste* for a source note. 
+- The legend display is a bit difficult with the number and length of items. 
+- There are ways to do this but it might require data manipulation.
+
+## Map Outcome
+
+```{r making the map with output, echo=FALSE}
+ggplot(data=ruralmapdata) + geom_sf(aes(fill=Description)) + theme_minimal()+ coord_sf(datum=NA) + scale_fill_viridis_d(name="Rurality") + labs(caption=paste("Source:USDA")) + theme(legend.text = element_text(size=6),legend.key.width=unit(.25,"in"), legend.title=element_blank(),legend.position="bottom")+guides(fill=guide_legend(nrow=5,byrow=TRUE))
+```
