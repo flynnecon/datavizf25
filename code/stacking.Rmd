@@ -1,0 +1,20 @@
+---
+title: "R stacking lines"
+output: html_notebook
+---
+
+
+
+```{r}
+library(tidyverse)
+infldata <- read.csv("https://raw.githubusercontent.com/flynnecon/datavizf25/refs/heads/main/data/infldata.csv")
+infldata$year <- year(mdy(infldata$date))
+infldata$month <- month(mdy(infldata$date))
+ggplot(infldata,aes(x=month,y=expinfl,group=year)) + geom_line()
+```
+
+
+
+
+
+
