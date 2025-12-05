@@ -1,0 +1,23 @@
+---
+title: "Histograms"
+output: html_notebook
+---
+
+
+Loading Packages and data
+```{r}
+library(tidyverse)
+library(viridis)
+```
+
+
+```{r}
+hockey <- read.csv("https://raw.githubusercontent.com/flynnecon/datavizf25/refs/heads/main/data/hkygoaliewght.csv")
+```
+
+
+```{r plot 1980s}
+ggplot(hockey) + geom_histogram(aes(x=d1980s))
+```
+
+
